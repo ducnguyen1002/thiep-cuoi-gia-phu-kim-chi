@@ -439,6 +439,7 @@
           <div class="grid grid-cols-2 gap-4 ">
             <!-- NHÀ CHÚ RỂ -->
             <a target="_blank"
+              onclick="gtag('event', 'map_click', { label: 'Nha Chu Re' })"
               href="https://maps.app.goo.gl/PcfiuevDwk9J5H1v8?g_st=ic" class="flex items-center justify-center gap-2 bg-stone-100 text-[#4a0404]
              px-4 py-2 rounded-full text-sm font-medium
              hover:bg-white transition shadow-sm">
@@ -448,8 +449,9 @@
             </a>
 
             <!-- NHÀ CÔ DÂU -->
-            <a target="_blank" href="https://maps.app.goo.gl/Yy87emvCyT5kRHC66"
-              class="flex items-center justify-center gap-2 bg-white/90 text-[#4a0404]
+            <a target="_blank"
+              onclick="gtag('event', 'map_click', { label: 'Nha Co Dau' })"
+              href="https://maps.app.goo.gl/Yy87emvCyT5kRHC66" class="flex items-center justify-center gap-2 bg-white/90 text-[#4a0404]
              px-4 py-2 rounded-full text-sm font-medium
              hover:bg-white transition shadow-sm">
               <i data-lucide="map-pin" class="w-4 h-4"></i>
@@ -886,6 +888,11 @@
         if (res.ok) {
           setButton('success');
           form.reset();
+          gtag('event', 'rsvp_submit', {
+            event_category: 'engagement',
+            event_label: 'RSVP Form',
+            value: document.getElementById('guests').value
+          });
         } else {
           throw new Error('Request failed');
         }
@@ -1013,6 +1020,11 @@
     const closeModalButton = document.getElementById('close-modal');
 
     function openModal() {
+      gtag('event', 'gift_open', {
+        event_category: 'interaction',
+        event_label: 'QR Gift'
+      });
+
       qrModal.classList.remove('hidden');
 
       // khóa nền
