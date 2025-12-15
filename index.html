@@ -564,50 +564,48 @@
             class="text-center font-bold text-xl text-stone-800 mb-6 uppercase">
             Xác nhận tham dự</h3>
 
-          <form class="space-y-4">
+          <form id="rsvpForm" class="space-y-4">
             <div>
               <label class="block text-xs font-medium text-stone-500 mb-1">Họ và
                 tên</label>
-              <input type="text" placeholder="Nhập tên của bạn"
-                class="w-full border border-stone-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#7f1d1d] placeholder-stone-300">
+              <input id="name" type="text" required
+                placeholder="Nhập tên của bạn"
+                class="w-full border border-stone-200 rounded-lg px-4 py-3 text-sm">
             </div>
 
             <div class="space-y-2">
-              <label class="block text-xs font-medium text-stone-500 mb-1">Bạn
-                sẽ tham dự chứ?</label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="radio" name="attendance"
-                  class="w-5 h-5 text-[#7f1d1d] focus:ring-[#7f1d1d]" checked>
-                <span class="text-sm text-stone-700">Có, tôi sẽ tham dự</span>
+              <label class="block text-xs font-medium text-stone-500 mb-1">
+                Bạn sẽ tham dự chứ?
               </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="radio" name="attendance"
-                  class="w-5 h-5 text-[#7f1d1d] focus:ring-[#7f1d1d]">
-                <span class="text-sm text-stone-700">Tôi bận, rất tiếc không thể
-                  tham dự</span>
+
+              <label class="flex items-center space-x-3">
+                <input type="radio" name="attendance" value="Có" checked>
+                <span>Có, tôi sẽ tham dự</span>
+              </label>
+
+              <label class="flex items-center space-x-3">
+                <input type="radio" name="attendance" value="Không">
+                <span>Tôi bận, không thể tham dự</span>
               </label>
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-stone-500 mb-1">Số
-                lượng người tham dự</label>
-              <div class="relative">
-                <select
-                  class="w-full border border-stone-200 rounded-lg px-4 py-3 text-sm appearance-none bg-white focus:outline-none focus:ring-1 focus:ring-[#7f1d1d]">
-                  <option>1 người</option>
-                  <option>2 người</option>
-                  <option>3 người</option>
-                </select>
-                <i data-lucide="chevron-down"
-                  class="absolute right-3 top-3.5 w-4 h-4 text-stone-400"></i>
-              </div>
+              <label class="block text-xs font-medium text-stone-500 mb-1">
+                Số lượng người tham dự
+              </label>
+              <select id="guests" class="w-full border px-4 py-3 rounded-lg">
+                <option value="1">1 người</option>
+                <option value="2">2 người</option>
+                <option value="3">3 người</option>
+              </select>
             </div>
 
-            <button type="button"
-              class="w-full bg-[#5e1212] text-white py-3 rounded-lg text-sm font-semibold mt-4 hover:bg-[#4a0404] transition shadow-md">
+            <button type="submit"
+              class="w-full bg-[#5e1212] text-white py-3 rounded-lg">
               Gửi xác nhận
             </button>
           </form>
+
         </div>
       </div>
     </section>
@@ -766,6 +764,45 @@
       offset: 80,
     });
   </script>
+
+  <script>
+    const form = document.getElementById('rsvpForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('name').value);
+      formData.append(
+        'attendance',
+        document.querySelector('input[name="attendance"]:checked').value
+      );
+      formData.append('guests', document.getElementById('guests').value);
+      formData.append('ua', navigator.userAgent);
+
+      try {
+        const res = await fetch(
+          'https://script.google.com/macros/s/AKfycbwc_GuvLpTKDVg-ArXeOHPcDf2YWWwBYkFySNcJp9YT3jqrKHWoCrRa4SYj9Ea2Jg8/exec',
+          {
+            method: 'POST',
+            body: formData
+          }
+        );
+
+        if (res.ok) {
+          alert('🎉 Đã gửi xác nhận thành công!');
+          form.reset();
+        } else {
+          alert('❌ Gửi thất bại');
+        }
+
+      } catch (err) {
+        alert('⚠️ Không thể kết nối');
+      }
+    });
+  </script>
+
+
 
   <script>
     const music = document.getElementById('background-music');
