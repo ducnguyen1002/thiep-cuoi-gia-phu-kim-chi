@@ -164,6 +164,21 @@
       }
     }
 
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, .4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
     /* Modal specific styles */
     .modal {
       transition: opacity 0.3s ease;
@@ -600,10 +615,12 @@
               </select>
             </div>
 
-            <button type="submit"
-              class="w-full bg-[#5e1212] text-white py-3 rounded-lg">
+            <button id="submitBtn" type="submit"
+              class="w-full bg-[#5e1212] text-white py-3 rounded-lg text-sm font-semibold
+         hover:bg-[#4a0404] transition shadow-md flex items-center justify-center gap-2">
               Gửi xác nhận
             </button>
+
           </form>
 
         </div>
@@ -765,7 +782,7 @@
     });
   </script>
 
-  <script>
+  <!-- <script>
     const form = document.getElementById('rsvpForm');
 
     form.addEventListener('submit', async (e) => {
@@ -800,8 +817,66 @@
         alert('⚠️ Không thể kết nối');
       }
     });
-  </script>
+  </script> -->
 
+  <script>
+    const form = document.getElementById('rsvpForm');
+    const btn = document.getElementById('submitBtn');
+
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwc_GuvLpTKDVg-ArXeOHPcDf2YWWwBYkFySNcJp9YT3jqrKHWoCrRa4SYj9Ea2Jg8/exec';
+
+    function setButton(state) {
+      btn.disabled = true;
+
+      if (state === 'loading') {
+        btn.innerHTML = `<span class="spinner"></span> Đang gửi...`;
+        btn.className = btn.className.replace(/bg-\[[^\]]+\]/, 'bg-[#7f1d1d]');
+      }
+
+      if (state === 'success') {
+        btn.innerHTML = '✓ Đã xác nhận';
+        btn.className = btn.className.replace(/bg-\[[^\]]+\]/, 'bg-green-600');
+      }
+
+      if (state === 'error') {
+        btn.disabled = false;
+        btn.innerHTML = '❌ Gửi thất bại – Thử lại';
+        btn.className = btn.className.replace(/bg-\[[^\]]+\]/, 'bg-[#b91c1c]');
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      setButton('loading');
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('name').value);
+      formData.append(
+        'attendance',
+        document.querySelector('input[name="attendance"]:checked').value
+      );
+      formData.append('guests', document.getElementById('guests').value);
+      formData.append('ua', navigator.userAgent);
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          setButton('success');
+          form.reset();
+        } else {
+          throw new Error('Request failed');
+        }
+
+      } catch (err) {
+        setButton('error');
+      }
+    });
+  </script>
 
 
   <script>
